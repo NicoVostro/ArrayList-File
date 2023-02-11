@@ -1,0 +1,125 @@
+/*----------------------------------------------------
+FILE Incassi.txt (da creare pirima)
+400.70
+560.87
+243.98
+599.00
+965.90
+------------------------------------------------------*/
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+import static java.lang.Float.parseFloat;
+
+public class Gestisci{
+    File file1 = new File("src/incassi.txt");
+    Scanner scan = new Scanner(System.in);
+    Scanner sc = new Scanner(System.in);
+    ArrayList<String> incasso  = new ArrayList <> (10);
+
+    void Menu() throws IOException {
+        while(true){
+            System.out.println("-----MENU-----\nDigitare:\n1 - per inserire un nuovo negozio con relativo incasso;");
+            System.out.println("2 - per stampare la quantità di vendite (standard 100 euro) per ogni negozio;");
+            System.out.println("9 - per uscire dal programma;");
+            String impSc = sc.nextLine();
+            char scelta = impSc.charAt(0);
+            switch(scelta){
+                case('1'):
+                    Inserisci();
+                    break;
+                case('2'):
+                    StampaAsterischi();
+                    break;
+                case('9'):
+                    System.out.println("Chiusura programma...");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Scelta non valida: digitare correttamente.");
+                    break;
+            }
+        }
+    }
+    void Inserisci() throws IOException {
+        FileReader lettore = new FileReader(file1);
+        FileWriter scrittore = new FileWriter(file1, true);
+        System.out.println("Inserire l'incasso, in euro, del nuovo negozio (usare punto, non virgola).");
+        String ins = scan.nextLine();
+        int controllo = 0;
+        for(int i=0; i< ins.length(); i++){
+            if(ins.charAt(i) == '0' || ins.charAt(i) == '1' || ins.charAt(i) == '2' || ins.charAt(i) == '3' ||
+                    ins.charAt(i) == '4' || ins.charAt(i) == '5' || ins.charAt(i) == '6' || ins.charAt(i) == '7' ||
+                    ins.charAt(i) == '8' || ins.charAt(i) == '9' || ins.charAt(i) == 'f' || ins.charAt(i) == '.'){
+                char vero = 'v';
+            }else{
+                controllo++;
+            }
+        }
+        if(controllo == 0){
+            String numero = "";
+            int indice = lettore.read();
+            if(indice != -1){
+                indice = lettore.read();
+            }else{
+                for(int i=0; i<ins.length(); i++){
+                    char carNuovo = ins.charAt(i);
+                    scrittore.append(carNuovo);
+                }
+                scrittore.append("\n");
+            }
+            System.out.println("Importo inserito per il nuovo negozio.");
+        }else{
+            System.out.println("Importo non valido: rieseguire l'operazione.");
+        }
+        scrittore.close();
+        lettore.close();
+    }
+
+    void StampaAsterischi() throws IOException{
+        final int div = 100;
+        File file1 = new File("src/incassi.txt");
+        FileReader lettore = new FileReader(file1);
+        String numero = "";
+        int indice = lettore.read();
+        while(indice != -1){
+            char letto = (char) indice;
+            if(letto != '\n' && letto != '\0') {
+                numero += letto;
+            }
+            if(indice == '\n' || indice == '\0'){
+                incasso.add(numero);
+                numero = "";
+            }
+            indice = lettore.read();
+        }
+        lettore.close();
+        if(incasso.size() != 0){
+            for(int i=0; i<incasso.size(); i++){
+                float inc = parseFloat(incasso.get(i));
+                int numAst = (int) inc / div;
+                System.out.print("Negozio " + (i+1) + ": ");
+                for(int j=0; j<numAst; j++){
+                    System.out.print("*");
+                }
+                System.out.println("");
+            }
+        }else{
+            System.out.println("Non ci sono negozi registrati.");
+        }
+        incasso.clear();
+    }
+}
+/*---------------------------------------------------------------------------------------*/
+import java.io.IOException;
+public class Main {
+    public static void main(String[] args) {
+        Gestisci Gest = new Gestisci();
+        try{
+            Gest.Menu();
+        }catch(IOException exc){
+            throw new RuntimeException(exc);
+        }
+    }
+}
+/*---------------------------------------------------------------------------------------*/
